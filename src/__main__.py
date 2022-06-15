@@ -17,7 +17,6 @@ from search import (
     search_error,
     status_actions,
 )
-import pdb
 
 # could be made into config option in the future
 CACHED_RESULT_PATH = xdg_cache_home() / "wasitrending.json"
@@ -68,9 +67,6 @@ def publish_repos(repos):
         "description",
         "created_at",
         "stargazers_count",
-        "watchers_count",
-        "forks_count",
-        "open_issues_count",
         "language",
         "license",
     ]
