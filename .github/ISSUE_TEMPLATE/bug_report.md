@@ -20,16 +20,16 @@ This is where you put your issue description :)
 
 **Python version**
 
-<!-- Note that starcli only supports Python 3.6 or higher -->
+<!-- Note that wasitrending only supports Python 3.6 or higher -->
 
 **your operating system (and terminal type or shell of needed)**
 
 
-**starcli version**
+**wasitrending version**
 
 <!--
 use "pip freeze", if you are on linux/mac you can do:
-$ pip freeze | grep starcli
+$ pip freeze | grep wasitrending
 Or you can provide the commit SHA if you are running in
 development locally
 -->

@@ -1,4 +1,4 @@
-""" starcli.search """
+""" wasitrending.search """
 
 # Standard library imports
 from datetime import datetime, timedelta

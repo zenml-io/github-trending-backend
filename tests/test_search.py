@@ -3,11 +3,11 @@
 from datetime import datetime, timedelta
 from random import randint
 
-from starcli.search import search, search_github_trending
+from src.search import search, search_github_trending
 
 
 def test_search():
-    """Test the search functionality from starcli.search"""
+    """Test the search functionality from wasitrending.search"""
     repos = search("python")
     for repo in repos:
         assert repo["stargazers_count"] >= 0
@@ -19,7 +19,7 @@ def test_search():
 
 
 def test_search_topic():
-    """Test the search functionality from starcli.search"""
+    """Test the search functionality from wasitrending.search"""
     repos = search(language="python", topics=["deezer"])
     for repo in repos:
         assert repo["stargazers_count"] >= 0
@@ -102,7 +102,7 @@ def test_search_pushed_date():
 
 def test_search_stars():
     """
-    Test the search functionality for starcli.search.
+    Test the search functionality for wasitrending.search.
     """
     repos = search(language="python", stars="1")
     for repo in repos:
@@ -115,7 +115,7 @@ def test_search_stars():
 
 def test_search_user():
     """
-    Test the search functionality for starcli.search.
+    Test the search functionality for wasitrending.search.
     """
     repos = search(language="python", stars="1", user="hedyhli")
     for repo in repos:

@@ -1,5 +1,5 @@
 """ tests.test_shorten_count """
-from starcli.layouts import shorten_count
+from src.layouts import shorten_count
 
 
 def test_shorten_count():

@@ -1,4 +1,4 @@
-""" starcli.layouts """
+""" wasitrending.layouts """
 
 # Standard library imports
 import textwrap

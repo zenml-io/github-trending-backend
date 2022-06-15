@@ -1,4 +1,4 @@
-""" starcli.__main__ """
+""" wasitrending.__main__ """
 
 import click
 import re
@@ -20,7 +20,7 @@ from search import (
 
 
 # could be made into config option in the future
-CACHED_RESULT_PATH = xdg_cache_home() / "starcli.json"
+CACHED_RESULT_PATH = xdg_cache_home() / "wasitrending.json"
 CACHE_EXPIRATION = 1  # Minutes
 LANGUAGES_SUPPORTED = ["go", "python", "javascript", "typescript", "java", "kotlin", "rust", "jupyter notebook", "c++", "shell"]
 

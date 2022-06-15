@@ -4,8 +4,8 @@ here and ignore everything below-->
 **Checklist**
 
 - [ ] My code is properly formatted using the latest [black](https://github.com/psf/black) <!--Don't worry if you don't know what this is, the formatting checks will still pass-->
-- [ ] I have added/updated [tests](https://github.com/hedythedev/starcli/tree/main/tests) if needed <!--pytest-->
-- [ ] I have tried running my code manually <!-- run using `python3 -m starcli` -->
+- [ ] I have added/updated [tests](https://github.com/zenml-io/wasitrending/tree/main/tests) if needed <!--pytest-->
+- [ ] I have tried running my code manually <!-- run using `python3 -m wasitrending`-->
 - [ ] I have checked for spelling errors <!--The code will be run through codespell-->
 <!--
   Please mark this PR as draft if it is still work in progress
