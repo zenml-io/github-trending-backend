@@ -22,7 +22,39 @@ from search import (
 # could be made into config option in the future
 CACHED_RESULT_PATH = xdg_cache_home() / "wasitrending.json"
 CACHE_EXPIRATION = 1  # Minutes
-LANGUAGES_SUPPORTED = ["go", "python", "javascript", "typescript", "java", "kotlin", "rust", "jupyter notebook", "c++", "shell"]
+LANGUAGES_SUPPORTED = [
+    "go",
+    "python",
+    "javascript",
+    "typescript",
+    "java",
+    "kotlin",
+    "rust",
+    "jupyter notebook",
+    "c++",
+    "shell",
+]
+
+
+def initialize_segment():
+    """Initialize segment."""
+    write_key = os.getenv("SEGMENT_WRITE_KEY")
+    if write_key is None:
+        raise ValueError("SEGMENT_WRITE_KEY must be set")
+    analytics.write_key = write_key
+
+
+def initialize_discord():
+    """Initialize discord."""
+    webhook = os.getenv("DISCORD_WEBHOOK")
+    if webhook is None:
+        raise ValueError("DISCORD_WEBHOOK must be set")
+
+
+def initialize():
+    """Initialize conditions."""
+    initialize_segment()
+    initialize_discord()
 
 
 @click.command()
@@ -215,10 +247,32 @@ def cli(
 
     # print_results(repos, page=pager, layout=layout)
     publish_repos(repos)
-    
-    
+
+
 def publish_repos(repos):
-    publish_keys = ['id', 'name', 'full_name', 'private', 'html_url', 'description', 'created_at', 'updated_at', 'pushed_at', 'homepage', 'size', 'stargazers_count', 'watchers_count', 'language',  'forks_count', 'archived', 'disabled', 'open_issues_count', 'license',  'is_template', 'visibility']
+    publish_keys = [
+        "id",
+        "name",
+        "full_name",
+        "private",
+        "html_url",
+        "description",
+        "created_at",
+        "updated_at",
+        "pushed_at",
+        "homepage",
+        "size",
+        "stargazers_count",
+        "watchers_count",
+        "language",
+        "forks_count",
+        "archived",
+        "disabled",
+        "open_issues_count",
+        "license",
+        "is_template",
+        "visibility",
+    ]
     for repo in repos:
         publishable_repo = {}
         for k in publish_keys:
@@ -229,31 +283,31 @@ def publish_repos(repos):
         print("Published repo")
         publish_repo(publishable_repo)
 
+
 def publish_repo(repo):
-    analytics.track('GITHUB_ACTIONS_BOT_PROD', 'Repository tracked', repo)
-    if repo and 'full_name' in repo and repo['full_name']:
-        if 'zenml' in repo['full_name']:
-            notify_discord(repo['full_name'])
+    analytics.track("GITHUB_ACTIONS_BOT_PROD", "Repository tracked", repo)
+    if repo and "full_name" in repo and repo["full_name"]:
+        if "zenml" in repo["full_name"]:
+            notify_discord(repo["full_name"])
+
 
 def notify_discord(repo_name):
     # post to discord
-    send_discord_message(f'{repo_name} is on GitHub Trending!!!')
+    send_discord_message(f"{repo_name} is on GitHub Trending!!!")
+
 
 def send_discord_message(message) -> None:
-    discord_url = os.getenv('DISCORD_WEBHOOK')
+    discord_url = os.getenv("DISCORD_WEBHOOK")
     if discord_url is None:
         return
     webhook = Webhook.from_url(discord_url, adapter=RequestsWebhookAdapter())
     webhook.send(message)
     raise Exception
-    
+
 
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
-    write_key = os.getenv('SEGMENT_WRITE_KEY')
-    if write_key is None:
-        raise ValueError('SEGMENT_WRITE_KEY must be set')
-    analytics.write_key = write_key 
+    initialize()
     try:
         cli()
     except Exception as e:
