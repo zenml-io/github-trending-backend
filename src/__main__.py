@@ -17,7 +17,7 @@ from search import (
     search_error,
     status_actions,
 )
-
+import pdb
 
 # could be made into config option in the future
 CACHED_RESULT_PATH = xdg_cache_home() / "wasitrending.json"
@@ -62,26 +62,17 @@ def initialize():
 def publish_repos(repos):
     publish_keys = [
         "id",
-        "name",
         "full_name",
-        "private",
         "html_url",
+        "date_range",
         "description",
         "created_at",
-        "updated_at",
-        "pushed_at",
-        "homepage",
-        "size",
         "stargazers_count",
         "watchers_count",
-        "language",
         "forks_count",
-        "archived",
-        "disabled",
         "open_issues_count",
+        "language",
         "license",
-        "is_template",
-        "visibility",
     ]
     for repo in repos:
         publishable_repo = {}
