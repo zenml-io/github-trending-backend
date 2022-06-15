@@ -35,11 +35,13 @@ LANGUAGES_SUPPORTED = [
     "shell",
 ]
 
+WORKER_ENVIRONMENT = os.getenv("WORKER_ENVIRONMENT", "development")
+
 
 def initialize_segment():
     """Initialize segment."""
     write_key = os.getenv("SEGMENT_WRITE_KEY")
-    if write_key is None:
+    if write_key is None and WORKER_ENVIRONMENT != "development":
         raise ValueError("SEGMENT_WRITE_KEY must be set")
     analytics.write_key = write_key
 
@@ -47,14 +49,71 @@ def initialize_segment():
 def initialize_discord():
     """Initialize discord."""
     webhook = os.getenv("DISCORD_WEBHOOK")
-    if webhook is None:
+    if webhook is None and WORKER_ENVIRONMENT != "development":
         raise ValueError("DISCORD_WEBHOOK must be set")
 
 
 def initialize():
     """Initialize conditions."""
-    initialize_segment()
     initialize_discord()
+    initialize_segment()
+
+
+def publish_repos(repos):
+    publish_keys = [
+        "id",
+        "name",
+        "full_name",
+        "private",
+        "html_url",
+        "description",
+        "created_at",
+        "updated_at",
+        "pushed_at",
+        "homepage",
+        "size",
+        "stargazers_count",
+        "watchers_count",
+        "language",
+        "forks_count",
+        "archived",
+        "disabled",
+        "open_issues_count",
+        "license",
+        "is_template",
+        "visibility",
+    ]
+    for repo in repos:
+        publishable_repo = {}
+        for k in publish_keys:
+            if k in repo:
+                publishable_repo[k] = repo[k]
+            else:
+                publishable_repo[k] = None
+        print("Published repo")
+        publish_repo(publishable_repo)
+
+
+def publish_repo(repo):
+    """Publish the repo to segment"""
+    analytics.track("GITHUB_ACTIONS_BOT_PROD", "Repository tracked", repo)
+    if repo and "full_name" in repo and repo["full_name"]:
+        if "zenml" in repo["full_name"]:
+            notify_discord(repo["full_name"])
+
+
+def notify_discord(repo_name):
+    """Post to discord"""
+    send_discord_message(f"{repo_name} is on GitHub Trending!!!")
+
+
+def send_discord_message(message) -> None:
+    """Send discord message."""
+    discord_url = os.getenv("DISCORD_WEBHOOK")
+    if discord_url is None:
+        return
+    webhook = Webhook.from_url(discord_url, adapter=RequestsWebhookAdapter())
+    webhook.send(message)
 
 
 @click.command()
@@ -143,7 +202,6 @@ def initialize():
     default=False,
     help="Use $PAGER to page output. (put -r in $LESS to enable ANSI styles)",
 )
-@click.option("--debug", is_flag=True, default=False, help="Turn on debugging mode")
 def cli(
     lang,
     spoken_language,
@@ -157,12 +215,12 @@ def cli(
     long_stats,
     date_range,
     user,
-    debug=False,
     auth="",
     pager=False,
 ):
     """Find trending repos on GitHub"""
-    if debug:
+    debug = WORKER_ENVIRONMENT == "development"
+    if WORKER_ENVIRONMENT == "development":
         import logging
 
         debug_requests_on()
@@ -247,62 +305,6 @@ def cli(
 
     # print_results(repos, page=pager, layout=layout)
     publish_repos(repos)
-
-
-def publish_repos(repos):
-    publish_keys = [
-        "id",
-        "name",
-        "full_name",
-        "private",
-        "html_url",
-        "description",
-        "created_at",
-        "updated_at",
-        "pushed_at",
-        "homepage",
-        "size",
-        "stargazers_count",
-        "watchers_count",
-        "language",
-        "forks_count",
-        "archived",
-        "disabled",
-        "open_issues_count",
-        "license",
-        "is_template",
-        "visibility",
-    ]
-    for repo in repos:
-        publishable_repo = {}
-        for k in publish_keys:
-            if k in repo:
-                publishable_repo[k] = repo[k]
-            else:
-                publishable_repo[k] = None
-        print("Published repo")
-        publish_repo(publishable_repo)
-
-
-def publish_repo(repo):
-    analytics.track("GITHUB_ACTIONS_BOT_PROD", "Repository tracked", repo)
-    if repo and "full_name" in repo and repo["full_name"]:
-        if "zenml" in repo["full_name"]:
-            notify_discord(repo["full_name"])
-
-
-def notify_discord(repo_name):
-    # post to discord
-    send_discord_message(f"{repo_name} is on GitHub Trending!!!")
-
-
-def send_discord_message(message) -> None:
-    discord_url = os.getenv("DISCORD_WEBHOOK")
-    if discord_url is None:
-        return
-    webhook = Webhook.from_url(discord_url, adapter=RequestsWebhookAdapter())
-    webhook.send(message)
-    raise Exception
 
 
 if __name__ == "__main__":
