@@ -12,6 +12,7 @@ jobs:
     env:
       SEGMENT_WRITE_KEY: ${{ secrets.SEGMENT_WRITE_KEY }}
       DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+      WORKER_ENVIRONMENT: ${{ secrets.WORKER_ENVIRONMENT }}
     steps:
       - uses: actions/checkout@v2
 

@@ -83,7 +83,7 @@ def publish_repos(repos):
 
 def publish_repo(repo):
     """Publish the repo to segment"""
-    analytics.track("GITHUB_ACTIONS_BOT_PROD", "Repository tracked", repo)
+    analytics.track("GITHUB_TRENDING_BACKEND_PRODUCTION", "Repository tracked", repo)
     if repo and "full_name" in repo and repo["full_name"]:
         if "zenml" in repo["full_name"]:
             notify_discord(repo["full_name"])
